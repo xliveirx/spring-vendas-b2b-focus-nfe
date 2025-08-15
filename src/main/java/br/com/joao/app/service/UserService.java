@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserResponse createUser(UserCreateRequest req) {
 
-        if(userRepository.findByEmail(req.email()).isPresent()) {
+        if(userRepository.findByEmailAndActiveTrue(req.email()).isPresent()) {
             throw new EmailAlreadyExistsException();
         }
 
@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserResponse editUser(UserEditRequest req, User logged) {
 
-        var user = userRepository.findByEmail(logged.getUsername()).orElseThrow();
+        var user = userRepository.findByEmailAndActiveTrue(logged.getUsername()).orElseThrow();
 
         if(req.name() != null){
             user.setName(req.name());
@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void disableUser(User logged) {
 
-        var user = userRepository.findByEmail(logged.getUsername()).orElseThrow();
+        var user = userRepository.findByEmailAndActiveTrue(logged.getUsername()).orElseThrow();
 
         user.setActive(false);
 
@@ -124,6 +124,6 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).orElseThrow();
+        return userRepository.findByEmailAndActiveTrue(username).orElseThrow();
     }
 }

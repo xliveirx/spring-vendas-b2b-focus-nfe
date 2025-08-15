@@ -31,6 +31,11 @@ public class SecurityConfig {
                 authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+
+                    req.requestMatchers(HttpMethod.DELETE, "/disable/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PATCH, "/enable/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PATCH, "/edit-role/{id}").hasRole("ADMIN");
+
                     req.anyRequest().authenticated();
                 })
                 .csrf(csrf -> csrf.disable())

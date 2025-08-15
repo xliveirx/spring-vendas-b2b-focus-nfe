@@ -34,7 +34,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if(token != null) {
             try {
                 String email = tokenService.validateToken(token);
-                User user = userRepository.findByEmail(email).orElseThrow();
+                User user = userRepository.findByEmailAndActiveTrue(email).orElseThrow();
 
                 if(user != null) {
                     Authentication auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
