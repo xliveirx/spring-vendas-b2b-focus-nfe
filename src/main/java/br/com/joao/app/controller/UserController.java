@@ -1,6 +1,5 @@
 package br.com.joao.app.controller;
 
-import br.com.joao.app.domain.Role;
 import br.com.joao.app.domain.User;
 import br.com.joao.app.dto.RoleEditRequest;
 import br.com.joao.app.dto.UserCreateRequest;
@@ -16,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")

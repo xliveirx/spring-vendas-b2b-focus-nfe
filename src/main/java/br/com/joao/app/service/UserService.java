@@ -1,6 +1,5 @@
 package br.com.joao.app.service;
 
-import br.com.joao.app.domain.Role;
 import br.com.joao.app.domain.User;
 import br.com.joao.app.domain.exception.EmailAlreadyExistsException;
 import br.com.joao.app.domain.exception.PasswordsDontMatchException;
