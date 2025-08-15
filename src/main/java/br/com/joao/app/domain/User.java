@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Entity
@@ -24,6 +25,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean active;
+
+    private LocalDateTime createdAt;
+
     public User() {}
 
     public User(String name, String email, String password) {
@@ -31,6 +36,8 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.role = Role.SELLER;
+        this.active = true;
+        this.createdAt = LocalDateTime.now();
     }
 
     @Override
@@ -54,5 +61,13 @@ public class User implements UserDetails {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
