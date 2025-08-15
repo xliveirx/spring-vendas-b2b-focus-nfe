@@ -1,6 +1,8 @@
 package br.com.joao.app.controller;
 
+import br.com.joao.app.domain.Role;
 import br.com.joao.app.domain.User;
+import br.com.joao.app.dto.RoleEditRequest;
 import br.com.joao.app.dto.UserCreateRequest;
 import br.com.joao.app.dto.UserEditRequest;
 import br.com.joao.app.dto.UserResponse;
@@ -77,6 +79,15 @@ public class UserController {
         this.userService.enableUserById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/edit-role/{id}")
+    public ResponseEntity<Void> editRole(@PathVariable Long id, @RequestBody RoleEditRequest role) {
+
+        this.userService.editRole(id, role);
+
+        return ResponseEntity.noContent().build();
+
     }
 
 }

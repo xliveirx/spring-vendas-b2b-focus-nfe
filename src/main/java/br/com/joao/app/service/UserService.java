@@ -1,12 +1,15 @@
 package br.com.joao.app.service;
 
+import br.com.joao.app.domain.Role;
 import br.com.joao.app.domain.User;
 import br.com.joao.app.domain.exception.EmailAlreadyExistsException;
 import br.com.joao.app.domain.exception.PasswordsDontMatchException;
+import br.com.joao.app.dto.RoleEditRequest;
 import br.com.joao.app.dto.UserCreateRequest;
 import br.com.joao.app.dto.UserEditRequest;
 import br.com.joao.app.dto.UserResponse;
 import br.com.joao.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +30,7 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public UserResponse createUser(UserCreateRequest req) {
 
         if(userRepository.findByEmail(req.email()).isPresent()) {
@@ -49,6 +53,7 @@ public class UserService implements UserDetailsService {
     }
 
 
+    @Transactional
     public UserResponse editUser(UserEditRequest req, User logged) {
 
         var user = userRepository.findByEmail(logged.getUsername()).orElseThrow();
@@ -57,17 +62,22 @@ public class UserService implements UserDetailsService {
             user.setName(req.name());
         }
 
+        userRepository.save(user);
+
         return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getUsername());
     }
 
+    @Transactional
     public void disableUser(User logged) {
 
         var user = userRepository.findByEmail(logged.getUsername()).orElseThrow();
 
         user.setActive(false);
+
+        userRepository.save(user);
 
     }
 
@@ -77,6 +87,7 @@ public class UserService implements UserDetailsService {
                 .map(u -> new UserResponse(u.getId(), u.getName(), u.getUsername()));
     }
 
+    @Transactional
     public void disableUserById(Long id) {
 
         var user = userRepository.findById(id)
@@ -84,8 +95,11 @@ public class UserService implements UserDetailsService {
 
         user.setActive(false);
 
+        userRepository.save(user);
+
     }
 
+    @Transactional
     public void enableUserById(Long id) {
 
         var user = userRepository.findById(id)
@@ -93,6 +107,19 @@ public class UserService implements UserDetailsService {
 
         user.setActive(true);
 
+        userRepository.save(user);
+
+    }
+
+    @Transactional
+    public void editRole(Long id, RoleEditRequest dto) {
+
+        var user = userRepository.findById(id)
+                .orElseThrow();
+
+        user.setRole(dto.role());
+
+        userRepository.save(user);
     }
 
     @Override
