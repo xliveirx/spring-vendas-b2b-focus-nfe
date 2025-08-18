@@ -31,6 +31,10 @@ public class SecurityConfig {
                 authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.POST, "/users").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+                    req.requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html").permitAll();
 
                     req.requestMatchers(HttpMethod.DELETE, "/users/disable/{id}").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.PATCH, "/users/enable/{id}").hasRole("ADMIN");
