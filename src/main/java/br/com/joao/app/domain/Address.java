@@ -22,4 +22,28 @@ public class Address {
     }
 
     public Address() {}
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public String getCountry() {
+        return country;
+    }
 }
