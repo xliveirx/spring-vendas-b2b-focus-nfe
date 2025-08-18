@@ -49,7 +49,8 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User editUser(UserEditRequest req, User logged) {
 
-        var user = userRepository.findByEmailAndActiveTrue(logged.getUsername()).orElseThrow();
+        var user = userRepository.findByEmailAndActiveTrue(logged.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if(req.name() != null){
             user.setName(req.name());
@@ -61,7 +62,8 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void disableUser(User logged) {
 
-        var user = userRepository.findByEmailAndActiveTrue(logged.getUsername()).orElseThrow();
+        var user = userRepository.findByEmailAndActiveTrue(logged.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setActive(false);
 
@@ -76,8 +78,8 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void disableUserById(Long id) {
 
-        var user = userRepository.findById(id)
-                .orElseThrow();
+        var user = userRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setActive(false);
 
@@ -87,8 +89,8 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void enableUserById(Long id) {
 
-        var user = userRepository.findById(id)
-                .orElseThrow();
+        var user = userRepository.findByIdAndActiveFalse(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setActive(true);
 
@@ -99,7 +101,7 @@ public class UserService implements UserDetailsService {
     public void editRole(Long id, RoleEditRequest dto) {
 
         var user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setRole(dto.role());
 
