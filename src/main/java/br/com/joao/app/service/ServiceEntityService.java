@@ -7,7 +7,11 @@ import br.com.joao.app.dto.ServiceEditRequest;
 import br.com.joao.app.dto.ServiceRequest;
 import br.com.joao.app.repository.ServiceEntityRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ServiceEntityService {
@@ -50,5 +54,14 @@ public class ServiceEntityService {
 
         serviceEntityRepository.delete(service);
 
+    }
+
+    public Page<ServiceEntity> getServices(Pageable pageable) {
+
+        if(serviceEntityRepository.findAll().isEmpty()) {
+            throw new ServiceEntityNotFoundException();
+        }
+
+        return serviceEntityRepository.findAll(pageable);
     }
 }
