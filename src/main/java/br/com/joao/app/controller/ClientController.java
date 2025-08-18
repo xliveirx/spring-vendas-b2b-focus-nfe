@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +19,6 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/clients")
-@PreAuthorize("hasRole('ADMIN')")
 public class ClientController {
 
     private final ClientService clientService;
@@ -54,11 +54,22 @@ public class ClientController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/disable/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id, @AuthenticationPrincipal User logged){
 
         clientService.deleteClient(id, logged);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
+    @PatchMapping("/enable/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> enableClient(@PathVariable Long id,
+                                             @AuthenticationPrincipal User logged){
+
+        clientService.enableClient(id, logged);
 
         return ResponseEntity.noContent().build();
 
@@ -69,7 +80,7 @@ public class ClientController {
     public ResponseEntity<Page<ClientResponse>> getClients(@RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int size){
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
         var clients = clientService.getClients(pageable);
 

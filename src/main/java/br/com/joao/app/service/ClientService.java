@@ -4,7 +4,8 @@ import br.com.joao.app.domain.Address;
 import br.com.joao.app.domain.Client;
 import br.com.joao.app.domain.User;
 import br.com.joao.app.domain.exception.ClientNotFoundException;
-import br.com.joao.app.domain.exception.CnpjAlreadyRegistered;
+import br.com.joao.app.domain.exception.CnpjAlreadyRegisteredException;
+import br.com.joao.app.domain.exception.CompanyNameAlreadyRegisteredException;
 import br.com.joao.app.dto.ClientEditRequest;
 import br.com.joao.app.dto.ClientRequest;
 import br.com.joao.app.repository.ClientRepository;
@@ -27,7 +28,16 @@ public class ClientService {
     @Transactional
     public Client registerClient(ClientRequest req, User logged) {
 
-        if(clientRepository.findByCnpj(req.cnpj()).isEmpty() && clientRepository.findByCompanyNameIgnoreCase(req.companyName()).isEmpty()) {
+        if(clientRepository.findByCnpjAndActiveTrue(req.cnpj()).isPresent()) {
+
+            throw new CnpjAlreadyRegisteredException();
+        }
+
+        if(clientRepository.findByCompanyNameIgnoreCaseAndActiveTrue(req.companyName()).isPresent()) {
+
+            throw new CompanyNameAlreadyRegisteredException();
+        }
+
             var client = new Client(
                     req.companyName(),
                     req.cnpj(),
@@ -45,10 +55,8 @@ public class ClientService {
                     logged
             );
 
-            return clientRepository.save(client);
-        }
+        return clientRepository.save(client);
 
-        throw new CnpjAlreadyRegistered();
     }
 
     @Transactional
@@ -57,7 +65,7 @@ public class ClientService {
         var client = clientRepository.findById(id)
                 .orElseThrow(ClientNotFoundException::new);
 
-        if(req.companyName() != null && clientRepository.findByCompanyNameIgnoreCase(req.companyName()).isEmpty()) {
+        if(req.companyName() != null && clientRepository.findByCompanyNameIgnoreCaseAndActiveTrue(req.companyName()).isEmpty()) {
             client.setCompanyName(req.companyName());
         }
 
@@ -91,20 +99,30 @@ public class ClientService {
     @Transactional
     public void deleteClient(Long id, User logged) {
 
-        var client = clientRepository.findById(id)
+        var client = clientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(ClientNotFoundException::new);
 
         client.setUpdatedBy(logged);
         client.setUpdatedAt(LocalDateTime.now());
         client.setActive(false);
+
+        clientRepository.save(client);
+    }
+
+    public void enableClient(Long id, User logged) {
+
+        var client = clientRepository.findByIdAndActiveFalse(id)
+                .orElseThrow(ClientNotFoundException::new);
+
+        client.setUpdatedBy(logged);
+        client.setUpdatedAt(LocalDateTime.now());
+        client.setActive(true);
+
+        clientRepository.save(client);
     }
 
     public Page<Client> getClients(Pageable pageable) {
 
-        if(clientRepository.findAll().isEmpty()){
-            throw new ClientNotFoundException();
-        }
-
-        return clientRepository.findAll(pageable);
+        return clientRepository.findAllByActiveTrue(pageable);
     }
 }
