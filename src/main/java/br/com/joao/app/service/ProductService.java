@@ -6,6 +6,8 @@ import br.com.joao.app.domain.exception.ProductNotFoundException;
 import br.com.joao.app.dto.ProductEditRequest;
 import br.com.joao.app.dto.ProductRequest;
 import br.com.joao.app.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,5 +56,14 @@ public class ProductService {
 
         productRepository.deleteById(product.getId());
 
+    }
+
+    public Page<Product> getProducts(Pageable pageable) {
+
+        if(productRepository.findAll(pageable).isEmpty()){
+            throw new ProductNotFoundException();
+        }
+
+        return productRepository.findAll(pageable);
     }
 }
