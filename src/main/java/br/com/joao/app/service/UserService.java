@@ -30,7 +30,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserResponse createUser(UserCreateRequest req) {
+    public User createUser(UserCreateRequest req) {
 
         if(userRepository.findByEmailAndActiveTrue(req.email()).isPresent()) {
             throw new EmailAlreadyExistsException();
@@ -42,18 +42,12 @@ public class UserService implements UserDetailsService {
 
         var encodedPassword = passwordEncoder.encode(req.password());
 
-        var user = userRepository.save(new User(req.name(), req.email(), encodedPassword));
-
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getUsername()
-        );
+        return userRepository.save(new User(req.name(), req.email(), encodedPassword));
     }
 
 
     @Transactional
-    public UserResponse editUser(UserEditRequest req, User logged) {
+    public User editUser(UserEditRequest req, User logged) {
 
         var user = userRepository.findByEmailAndActiveTrue(logged.getUsername()).orElseThrow();
 
@@ -61,12 +55,7 @@ public class UserService implements UserDetailsService {
             user.setName(req.name());
         }
 
-        userRepository.save(user);
-
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getUsername());
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -77,13 +66,11 @@ public class UserService implements UserDetailsService {
         user.setActive(false);
 
         userRepository.save(user);
-
     }
 
-    public Page<UserResponse> findAll(Pageable pageable) {
+    public Page<User> findAll(Pageable pageable) {
 
-        return userRepository.findAll(pageable)
-                .map(u -> new UserResponse(u.getId(), u.getName(), u.getUsername()));
+        return userRepository.findAll(pageable);
     }
 
     @Transactional
@@ -95,7 +82,6 @@ public class UserService implements UserDetailsService {
         user.setActive(false);
 
         userRepository.save(user);
-
     }
 
     @Transactional
@@ -107,7 +93,6 @@ public class UserService implements UserDetailsService {
         user.setActive(true);
 
         userRepository.save(user);
-
     }
 
     @Transactional

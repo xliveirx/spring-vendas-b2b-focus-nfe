@@ -33,7 +33,7 @@ public class ProductController {
 
         var res = ProductResponse.fromDomain(product);
 
-        return ResponseEntity.created(URI.create("/product/" + product.getId())).body(res);
+        return ResponseEntity.created(URI.create("/products/" + product.getId())).body(res);
 
     }
 

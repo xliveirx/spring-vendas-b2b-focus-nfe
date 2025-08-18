@@ -6,6 +6,7 @@ import br.com.joao.app.domain.exception.ServiceEntityNotFoundException;
 import br.com.joao.app.dto.ServiceEditRequest;
 import br.com.joao.app.dto.ServiceRequest;
 import br.com.joao.app.repository.ServiceEntityRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ public class ServiceEntityService {
         this.serviceEntityRepository = serviceEntityRepository;
     }
 
+    @Transactional
     public ServiceEntity registerService(ServiceRequest req) {
 
         if(serviceEntityRepository.findByNameIgnoreCase(req.name()).isPresent()) {
@@ -31,6 +33,7 @@ public class ServiceEntityService {
         return serviceEntityRepository.save(new ServiceEntity(req.name(), req.price(), req.description()));
     }
 
+    @Transactional
     public ServiceEntity updateService(ServiceEditRequest req, Long id) {
 
         var service = serviceEntityRepository.findById(id)
@@ -47,6 +50,7 @@ public class ServiceEntityService {
         return serviceEntityRepository.save(service);
     }
 
+    @Transactional
     public void deleteService(Long id) {
 
         var service = serviceEntityRepository.findById(id)

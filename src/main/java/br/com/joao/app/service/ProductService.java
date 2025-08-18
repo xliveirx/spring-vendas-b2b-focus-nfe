@@ -6,6 +6,7 @@ import br.com.joao.app.domain.exception.ProductNotFoundException;
 import br.com.joao.app.dto.ProductEditRequest;
 import br.com.joao.app.dto.ProductRequest;
 import br.com.joao.app.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public Product registerProduct(ProductRequest req) {
 
         if(productRepository.findByNameIgnoreCase(req.name()).isPresent()){
@@ -28,6 +30,7 @@ public class ProductService {
         return productRepository.save(new Product(req.name(), req.stockQuantity(), req.price(), req.description()));
     }
 
+    @Transactional
     public Product updateProduct(ProductEditRequest req, Long id) {
 
         var product = productRepository.findById(id)
@@ -49,6 +52,7 @@ public class ProductService {
 
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
 
         var product = productRepository.findById(id)
