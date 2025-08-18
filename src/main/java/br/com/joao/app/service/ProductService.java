@@ -6,7 +6,6 @@ import br.com.joao.app.domain.exception.ProductNotFoundException;
 import br.com.joao.app.dto.ProductEditRequest;
 import br.com.joao.app.dto.ProductRequest;
 import br.com.joao.app.repository.ProductRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 @Service
