@@ -29,9 +29,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest req) {
 
-        var body = this.userService.createUser(req);
+        var user = userService.createUser(req);
 
-        return ResponseEntity.created(URI.create("/users/" + req.name())).body(body);
+        var res = UserResponse.fromDomain(user);
+
+        return ResponseEntity.created(URI.create("/users/" + req.name())).body(res);
 
     }
 
@@ -39,15 +41,17 @@ public class UserController {
     public ResponseEntity<UserResponse> editUser(@RequestBody UserEditRequest req,
                                                  @AuthenticationPrincipal User logged) {
 
-        var body = this.userService.editUser(req, logged);
+        var user = userService.editUser(req, logged);
 
-        return ResponseEntity.ok(body);
+        var res = UserResponse.fromDomain(user);
+
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/disable")
     public ResponseEntity<Void> disableUser(@AuthenticationPrincipal User logged) {
 
-        this.userService.disableUser(logged);
+        userService.disableUser(logged);
 
         return ResponseEntity.noContent().build();
     }
@@ -58,15 +62,18 @@ public class UserController {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        var users = this.userService.findAll(pageable);
+        var users = userService.findAll(pageable);
 
-        return ResponseEntity.ok(users);
+        var res = users
+                .map(UserResponse::fromDomain);
+
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/disable/{id}")
     public ResponseEntity<Void> disableUser(@PathVariable Long id) {
 
-        this.userService.disableUserById(id);
+        userService.disableUserById(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -74,7 +81,7 @@ public class UserController {
     @PatchMapping("/enable/{id}")
     public ResponseEntity<Void> enableUser(@PathVariable Long id) {
 
-        this.userService.enableUserById(id);
+        userService.enableUserById(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -82,10 +89,9 @@ public class UserController {
     @PatchMapping("/edit-role/{id}")
     public ResponseEntity<Void> editRole(@PathVariable Long id, @RequestBody RoleEditRequest role) {
 
-        this.userService.editRole(id, role);
+        userService.editRole(id, role);
 
         return ResponseEntity.noContent().build();
 
     }
-
 }
