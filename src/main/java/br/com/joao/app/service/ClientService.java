@@ -65,6 +65,10 @@ public class ClientService {
         var client = clientRepository.findById(id)
                 .orElseThrow(ClientNotFoundException::new);
 
+        if(req == null){
+            return client;
+        }
+
         if(req.companyName() != null && clientRepository.findByCompanyNameIgnoreCaseAndActiveTrue(req.companyName()).isEmpty()) {
             client.setCompanyName(req.companyName());
         }

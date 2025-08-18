@@ -42,7 +42,7 @@ public class ClientController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientResponse> updateClient(@RequestBody @Valid ClientEditRequest req,
+    public ResponseEntity<ClientResponse> updateClient(@RequestBody(required = false) @Valid ClientEditRequest req,
                                                        @AuthenticationPrincipal User logged,
                                                        @PathVariable Long id){
 

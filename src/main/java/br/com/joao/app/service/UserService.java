@@ -52,6 +52,10 @@ public class UserService implements UserDetailsService {
         var user = userRepository.findByEmailAndActiveTrue(logged.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        if(req == null){
+            return user;
+        }
+
         if(req.name() != null){
             user.setName(req.name());
         }

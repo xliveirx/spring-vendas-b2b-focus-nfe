@@ -39,6 +39,10 @@ public class ServiceEntityService {
         var service = serviceEntityRepository.findById(id)
                 .orElseThrow(ServiceEntityNotFoundException::new);
 
+        if(req == null){
+            return service;
+        }
+
         if(req.price() != null){
             service.setPrice(req.price());
         }
@@ -61,10 +65,6 @@ public class ServiceEntityService {
     }
 
     public Page<ServiceEntity> getServices(Pageable pageable) {
-
-        if(serviceEntityRepository.findAll().isEmpty()) {
-            throw new ServiceEntityNotFoundException();
-        }
 
         return serviceEntityRepository.findAll(pageable);
     }

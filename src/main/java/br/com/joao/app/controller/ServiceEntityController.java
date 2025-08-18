@@ -39,7 +39,7 @@ public class ServiceEntityController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ServiceResponse> updateService(@PathVariable Long id,
-                                                         @RequestBody @Valid ServiceEditRequest req) {
+                                                         @RequestBody(required = false) @Valid ServiceEditRequest req) {
 
         var service = serviceEntityService.updateService(req, id);
 

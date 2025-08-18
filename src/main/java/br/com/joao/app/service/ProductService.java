@@ -36,6 +36,10 @@ public class ProductService {
         var product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
 
+        if(req == null){
+            return product;
+        }
+
         if(req.stockQuantity() != null){
             product.setStockQuantity(req.stockQuantity());
         }
@@ -63,10 +67,6 @@ public class ProductService {
     }
 
     public Page<Product> getProducts(Pageable pageable) {
-
-        if(productRepository.findAll(pageable).isEmpty()){
-            throw new ProductNotFoundException();
-        }
 
         return productRepository.findAll(pageable);
     }

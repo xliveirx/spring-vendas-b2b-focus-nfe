@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/edit-profile")
-    public ResponseEntity<UserResponse> editUser(@RequestBody UserEditRequest req,
+    public ResponseEntity<UserResponse> editUser(@RequestBody(required = false) UserEditRequest req,
                                                  @AuthenticationPrincipal User logged) {
 
         var user = userService.editUser(req, logged);

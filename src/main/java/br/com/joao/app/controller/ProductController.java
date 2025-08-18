@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class ProductController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
-                                                         @RequestBody @Valid ProductEditRequest req){
+                                                         @RequestBody(required = false) @Valid ProductEditRequest req){
 
         var product = productService.updateProduct(req, id);
 
@@ -64,7 +65,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponse>> getProducts(@RequestParam(defaultValue = "10") int size,
                                                              @RequestParam(defaultValue = "0") int page) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
         var services = productService.getProducts(pageable);
 
