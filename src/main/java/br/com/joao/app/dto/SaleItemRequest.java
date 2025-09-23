@@ -7,6 +7,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record SaleItemRequest(
         @NotNull ItemType itemType,
-        @NotBlank Long itemId,
+        @NotNull Long itemId,
         @Min(1) int quantity) {
 }

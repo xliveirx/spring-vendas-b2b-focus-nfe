@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/sales")
 public class SaleController {
@@ -27,6 +29,10 @@ public class SaleController {
                                                    @AuthenticationPrincipal User logged){
 
         var sale = saleService.createSale(req, logged);
+
+        var res = SaleResponse.fromDomain(sale);
+
+        return ResponseEntity.created(URI.create("/sales/" + sale.getId())).body(res);
 
     }
 

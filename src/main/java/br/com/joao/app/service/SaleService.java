@@ -23,13 +23,15 @@ public class SaleService {
     private final ClientRepository clientRepository;
     private final ProductRepository productRepository;
     private final ServiceEntityRepository serviceRepository;
+    private final NfeService nfeService;
 
 
-    public SaleService(SaleRepository saleRepository, ClientRepository clientRepository, ProductRepository productRepository, ServiceEntityRepository serviceRepository) {
+    public SaleService(SaleRepository saleRepository, ClientRepository clientRepository, ProductRepository productRepository, ServiceEntityRepository serviceRepository, NfeService nfeService) {
         this.saleRepository = saleRepository;
         this.clientRepository = clientRepository;
         this.productRepository = productRepository;
         this.serviceRepository = serviceRepository;
+        this.nfeService = nfeService;
     }
 
     public Sale createSale(SaleRequest req, User logged) {
@@ -60,7 +62,7 @@ public class SaleService {
                         product.setStockQuantity(product.getStockQuantity() - i.quantity());
                         productRepository.save(product);
 
-                        item = new SaleItem(product, null, sale, i.quantity(), product.getPrice());
+                        item = new SaleItem(product.getName(), product, null, sale, i.quantity(), product.getPrice());
                     }
 
                     else if(i.itemType().equals(ItemType.SERVICE)){
@@ -68,7 +70,7 @@ public class SaleService {
                         ServiceEntity service = serviceRepository.findById(i.itemId())
                                 .orElseThrow(ServiceEntityNotFoundException::new);
 
-                        item = new SaleItem(null, service, sale, i.quantity(), service.getPrice());
+                        item = new SaleItem(service.getName(),null, service, sale, i.quantity(), service.getPrice());
                     }
 
                     return item;
@@ -77,6 +79,17 @@ public class SaleService {
         sale.setItems(items);
         sale.calculateTotal();
 
-        return saleRepository.save(sale);
+        Sale saved = saleRepository.save(sale);
+
+        try {
+
+            nfeService.emitBySale(sale.getId());
+
+        } catch(Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return saved;
     }
 }

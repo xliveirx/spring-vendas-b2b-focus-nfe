@@ -18,7 +18,7 @@ public class Sale {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
     private List<SaleItem> items;
 
     private BigDecimal total;
